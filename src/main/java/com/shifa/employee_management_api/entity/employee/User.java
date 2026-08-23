@@ -1,4 +1,4 @@
-package com.shifa.employee_management_api.entity;
+package com.shifa.employee_management_api.entity.employee;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

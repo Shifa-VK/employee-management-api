@@ -1,6 +1,6 @@
 package com.shifa.employee_management_api.security;
 
-import com.shifa.employee_management_api.entity.User;
+import com.shifa.employee_management_api.entity.employee.User;
 import com.shifa.employee_management_api.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

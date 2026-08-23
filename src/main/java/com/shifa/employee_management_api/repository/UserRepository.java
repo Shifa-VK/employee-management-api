@@ -1,6 +1,6 @@
 package com.shifa.employee_management_api.repository;
 
-import com.shifa.employee_management_api.entity.User;
+import com.shifa.employee_management_api.entity.employee.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

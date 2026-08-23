@@ -24,7 +24,7 @@ public interface EmployeeService {
     void deleteById(Long Id);
 
     /*Update Employee*/
-    EmployeeResponse updateEmployeeResponse(Long Id, EmployeeRequest request);
+    EmployeeResponse updateEmployee(Long Id, EmployeeRequest request);
 
     /*Search Employee*/
     PageResponse<EmployeeResponse> getEmployees(

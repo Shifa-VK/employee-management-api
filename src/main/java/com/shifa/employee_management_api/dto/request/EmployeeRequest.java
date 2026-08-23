@@ -36,12 +36,13 @@ public class EmployeeRequest {
     )
     private String phone;
 
-    @NotBlank(message = "Department is required")
+    @NotNull(message = "Department is required")
     @Schema(
-            description = "Department",
-            example = "Android"
+            description = "Department Id",
+            example = "1"
     )
-    private String department;
+    private Long departmentId;
+//    private String department;
 
     @Positive(message = "Salary must be greater than zero")
     @Schema(

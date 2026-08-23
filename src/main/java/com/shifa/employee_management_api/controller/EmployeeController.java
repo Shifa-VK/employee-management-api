@@ -171,7 +171,7 @@ public class EmployeeController {
             @PathVariable Long id,
             @Valid @RequestBody EmployeeRequest request
     ){
-        EmployeeResponse response = employeeService.updateEmployeeResponse(id, request);
+        EmployeeResponse response = employeeService.updateEmployee(id, request);
         return ResponseEntity.ok(new ApiResponse<>(
                 true,
                 HttpStatus.OK.value(),

@@ -6,10 +6,9 @@ import com.shifa.employee_management_api.dto.request.RegisterRequest;
 import com.shifa.employee_management_api.dto.response.JwtResponse;
 import com.shifa.employee_management_api.dto.response.RefreshTokenResponse;
 import com.shifa.employee_management_api.dto.response.RegisterResponse;
-import com.shifa.employee_management_api.entity.User;
-import com.shifa.employee_management_api.exception.DuplicateEmailException;
+import com.shifa.employee_management_api.entity.employee.User;
+import com.shifa.employee_management_api.exception.DuplicateException;
 import com.shifa.employee_management_api.repository.UserRepository;
-import com.shifa.employee_management_api.security.CustomUserDetails;
 import com.shifa.employee_management_api.security.CustomUserDetailsService;
 import com.shifa.employee_management_api.security.JwtService;
 import com.shifa.employee_management_api.service.AuthService;
@@ -44,7 +43,7 @@ public class AuthServiceImpl implements AuthService {
         log.warn("Registering user");
         if (userRepository.existsByEmail(request.getEmail())){
             log.error("Employee already exists with email: {} ", request.getEmail());
-            throw new DuplicateEmailException("Email already exists");
+            throw new DuplicateException("Email already exists");
         }
         User user = User.builder()
                 .name(request.getName())

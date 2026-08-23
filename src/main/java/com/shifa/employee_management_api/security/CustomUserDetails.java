@@ -1,6 +1,6 @@
 package com.shifa.employee_management_api.security;
 
-import com.shifa.employee_management_api.entity.User;
+import com.shifa.employee_management_api.entity.employee.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

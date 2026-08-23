@@ -1,6 +1,6 @@
 package com.shifa.employee_management_api.dto.response;
 
-import com.shifa.employee_management_api.entity.Role;
+import com.shifa.employee_management_api.entity.employee.Role;
 import lombok.*;
 
 @Getter

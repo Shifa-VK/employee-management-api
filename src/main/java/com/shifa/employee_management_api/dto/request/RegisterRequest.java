@@ -1,6 +1,6 @@
 package com.shifa.employee_management_api.dto.request;
 
-import com.shifa.employee_management_api.entity.Role;
+import com.shifa.employee_management_api.entity.employee.Role;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

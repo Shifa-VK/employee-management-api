@@ -1,5 +1,6 @@
-package com.shifa.employee_management_api.entity;
+package com.shifa.employee_management_api.entity.employee;
 
+import com.shifa.employee_management_api.entity.department.Department;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,7 +27,9 @@ public class Employee {
 
     private String phone;
 
-    private String department;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
     private Double salary;
 

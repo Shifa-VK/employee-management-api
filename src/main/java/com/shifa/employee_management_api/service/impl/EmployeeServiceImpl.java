@@ -3,15 +3,16 @@ package com.shifa.employee_management_api.service.impl;
 import com.shifa.employee_management_api.dto.request.EmployeeRequest;
 import com.shifa.employee_management_api.dto.response.EmployeeResponse;
 import com.shifa.employee_management_api.dto.response.PageResponse;
-import com.shifa.employee_management_api.entity.Employee;
-import com.shifa.employee_management_api.exception.DuplicateEmailException;
-import com.shifa.employee_management_api.exception.EmployeeNotFoundException;
+import com.shifa.employee_management_api.entity.department.Department;
+import com.shifa.employee_management_api.entity.employee.Employee;
+import com.shifa.employee_management_api.exception.DuplicateException;
+import com.shifa.employee_management_api.exception.NotFoundException;
 import com.shifa.employee_management_api.exception.FileStorageException;
 import com.shifa.employee_management_api.mapper.EmployeeMapper;
+import com.shifa.employee_management_api.repository.DepartmentRepository;
 import com.shifa.employee_management_api.repository.EmployeeRepository;
 import com.shifa.employee_management_api.service.EmployeeService;
 import com.shifa.employee_management_api.service.storage.StorageService;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -28,15 +29,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EmployeeServiceImpl implements EmployeeService {
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final EmployeeMapper employeeMapper;
     private final StorageService storageService;
     public EmployeeResponse saveEmployee(EmployeeRequest request){
         log.info("Creating employee with email: {}", request.getEmail());
         if (employeeRepository.existsByEmail(request.getEmail())){
             log.error("Employee already exists with email: {}", request.getEmail());
-            throw new DuplicateEmailException("Employee already exist with same email: "+ request.getEmail());
+            throw new DuplicateException("Employee already exist with same email: "+ request.getEmail());
         }
+        Department department = departmentRepository.findById(request.getDepartmentId())
+                .orElseThrow(() ->
+                        new NotFoundException(
+                                "Department not found with id: " + request.getDepartmentId()));
         Employee employee = employeeMapper.toEntity(request);
+        employee.setDepartment(department);
         Employee savedEmployee = employeeRepository.save(employee);
         log.info("Employee created successfully with id: {}", savedEmployee.getId());
         return buildEmployeeResponse(savedEmployee);
@@ -62,7 +69,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 
                     log.warn("Employee not found with id: {}", id);
 
-                    return new EmployeeNotFoundException(
+                    return new NotFoundException(
                             "Employee not found with id: " + id);
                 });
         return buildEmployeeResponse(employee);
@@ -75,31 +82,36 @@ public class EmployeeServiceImpl implements EmployeeService {
         employeeRepository.findById(id)
                 .orElseThrow(()->{
                     log.warn("Employee not found with id: {}", id);
-                    return new EmployeeNotFoundException("Employee not found with id: " + id);
+                    return new NotFoundException("Employee not found with id: " + id);
                 });
         employeeRepository.deleteById(id);
         log.info("Employee deleted successfully with id: {}", id);
     }
 
     /*Update Employee*/
-    public EmployeeResponse updateEmployeeResponse(Long id, EmployeeRequest request){
+    public EmployeeResponse updateEmployee(Long id, EmployeeRequest request){
         log.info("Updating employee with id: {}", id);
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() ->{
                     log.warn("Employee not found with id: {}", id);
-                    return new EmployeeNotFoundException("Employee not found with ID" + id) ;
+                    return new NotFoundException("Employee not found with ID" + id) ;
                 }
                 );
         if(employeeRepository.existsByEmailAndIdNot(request.getEmail(), id)){
             log.error("Duplicate email found while updating employee: {}",
                     request.getEmail());
-            throw new DuplicateEmailException("Employee already exists with the same email: "+ request.getEmail());
+            throw new DuplicateException("Employee already exists with the same email: "+ request.getEmail());
         }
+        Department department = departmentRepository.findById(request.getDepartmentId())
+                .orElseThrow(() ->
+                        new NotFoundException(
+                                "Department not found with id: " + request.getDepartmentId()));
+
+        employee.setDepartment(department);
         employee.setName(request.getName());
         employee.setEmail(request.getEmail());
         employee.setSalary(request.getSalary());
         employee.setPhone(request.getPhone());
-        employee.setDepartment(request.getDepartment());
         log.info("Employee updated successfully with id: {}", id);
         return buildEmployeeResponse(employeeRepository.save(employee));
         //return employeeMapper.toResponse(employeeRepository.save(employee));
@@ -161,7 +173,7 @@ public class EmployeeServiceImpl implements EmployeeService {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() -> {
                     log.error("Employee not found with id: {}" , id);
-                    return   new EmployeeNotFoundException("Employee not found with id: " + id);
+                    return   new NotFoundException("Employee not found with id: " + id);
                 });
 
         // Delete old image if it exists
@@ -189,7 +201,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     public void deleteProfileImage(Long id) {
         Employee employee = employeeRepository.findById(id)
                 .orElseThrow(() ->
-                        new EmployeeNotFoundException("Employee not found with id: " + id));
+                        new NotFoundException("Employee not found with id: " + id));
 
         if (employee.getProfileImage() == null || employee.getProfileImage().isBlank()) {
             throw new FileStorageException("Employee does not have a profile image.");
